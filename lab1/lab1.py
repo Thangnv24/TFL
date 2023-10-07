@@ -105,9 +105,6 @@ def main():
     funcs = []
     amounts = []
     variables = []
-    coefcounter = 0
-    coefs = []
-    smtinqs = []
 
     # find the list of variables
     for i in range(len(example) - 1):
@@ -143,6 +140,8 @@ def main():
 
     #
     # counting the number of variables accepted by each function and creating a list of coefficients
+    coefcounter = 0
+    coefs = []
     for f in funcs:
         left = 0
         right = 0
@@ -169,7 +168,7 @@ def main():
         amounts.append(amount)
         coeff = []
         for i in range(amount):
-            coeff.append("t" + str(coefcounter))
+            coeff.append( 't' + str(coefcounter))
             coefcounter += 1
         coefs.append(coeff)
 
@@ -185,7 +184,8 @@ def main():
     print("\nПеременные:")
     print(variables)
 
-    # 
+    # неравенства из правил для z3
+    smt1 = []
     for s in scheme:
         ready = False
         while not ready:
@@ -230,16 +230,15 @@ def main():
                     if i == f:
                         ready = False
                         break
-        smtinqs.append(s)
+        smt1.append(s)
 
-    for i in range(len(smtinqs)):
-        if smtinqs[i][0] == '(' and smtinqs[i][len(smtinqs[i]) - 1] == ')':
-            smtinqs[i] = smtinqs[i][1:len(smtinqs[i]) - 1]
+    for i in range(len(smt1)):
+        if smt1[i][0] == '(' and smt1[i][len(smt1[i]) - 1] == ')':
+            smt1[i] = smt1[i][1:len(smt1[i]) - 1]
 
-    normal_ineqs = []
-
-    # 
-    for s in smtinqs:
+    # неравенства на человеческом языке для приведения подобных
+    smt2 = []
+    for s in smt1:
         while isin(s, '('):
             for i in range(len(s)):
                 summands = []
@@ -274,10 +273,10 @@ def main():
                             result += summands[k] + "*" + multi + " + "
                         result += summands[len(summands) - 1] + "*" + multi
                         s = s[:start] + result[:len(result)] + s[end:]
-        normal_ineqs.append(s)
+        smt2.append(s)
 
-    va1 = formSMT(normal_ineqs[0], variables)
-    va2 = formSMT(normal_ineqs[1], variables)
+    va1 = formSMT(smt2[0], variables)
+    va2 = formSMT(smt2[1], variables)
 
     print(va1)
     print(va2)

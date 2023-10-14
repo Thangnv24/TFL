@@ -1,5 +1,6 @@
 va1 = []
 va2 = []
+
 def check(arr, var):
     for a in arr:
         if a == var:
@@ -15,9 +16,10 @@ def formSMT(str, v):
             cou.append(0)
         else:
             for i in range(len(str)-1):
-                if str[i] == j[0] and str[i+1] == '*':
+                if str[i] == j and str[i+1] == '*':
                     cou.append(i-4)
     cou.append(len(str)-1)
+    cou.sort()
     th = 1
     for i in range(len(cou)):
         if cou[i] != 0:
@@ -32,6 +34,12 @@ def formSMT(str, v):
                 th += 1
             splitt.append(str[cou[i]+4: cou[th]])
             th += 1
+    if len(v) > 1:
+        if v[0] == splitt[2][0]:
+            splitt[1], splitt[2] = splitt[2], splitt[1]
+    # print(cou)
+    # print(splitt)
+    # print(str)
 
     part = []
     part1 = []
@@ -68,8 +76,8 @@ def formSMT(str, v):
         p = splitt[i].split("*")
         part.append(p)
 
-    str2 = ""
     for i in range(0, len(part)):
+        str2 = ""
         if len(part[i]) > 2:
             str2 += '(* '
             for j in range(1, len(part[i])):
@@ -81,6 +89,9 @@ def formSMT(str, v):
         elif len(part[i]) == 2:
             str2 = part[i][1]
         var1.append(str2)
+    # print(part)
+    # print(var1 )
+    print('\n')
     return var1
 
 def main():
@@ -105,7 +116,7 @@ def main():
     #
     divide = []
     divide.append(inp.split("->"))
-    print(divide)
+    # print(divide)
     scheme = []
     for t in divide:
         for f in t:

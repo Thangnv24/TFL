@@ -291,7 +291,7 @@ def main():
     mess += "))\n\n"
     mess += "(assert (or "
     for i in range(minx):
-        mess += "(>= " + va1[i] + " " + va2[i]+ ") "
+        mess += "(> " + va1[i] + " " + va2[i]+ ") "
     mess += "))\n\n"
     mess += "(assert (and "
     for i in range(len(coefs)):

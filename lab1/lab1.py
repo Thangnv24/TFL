@@ -8,6 +8,7 @@ def check(arr, var):
     return False
 
 def formSMT(str, v):
+    print(str)
     var1 = []
     splitt = []
     cou = []
@@ -34,63 +35,80 @@ def formSMT(str, v):
                 th += 1
             splitt.append(str[cou[i]+4: cou[th]])
             th += 1
+    for i in range(len(splitt)):
+        for j in range(len(splitt[i])):
+            for var in v:
+                if j < len(splitt[i]) and splitt[i][j] == '+' and splitt[i][0] == var:
+                    splitt[0] += splitt[i][j-1:]
+                    splitt[i] = splitt[i][:j-1]
+    count = []
+    for i in range(len(splitt)):
+        j = i + 1
+        while j < len(splitt):
+            for var in v:
+                if splitt[i][0] == var and splitt[j][0] == var:
+                    splitt[i] += " + " + splitt[j]
+                    count.append(splitt[j])
+                    splitt[j] = "wrong"
+
+            j+=1
+    for j in count:
+        splitt.remove("wrong")
+
     if len(v) > 1:
         if v[0] == splitt[2][0]:
             splitt[1], splitt[2] = splitt[2], splitt[1]
-    # print(cou)
-    # print(splitt)
-    # print(str)
 
-    part = []
-    part1 = []
-    count = 0
-    for i in  range(len(splitt[0])):
-        if splitt[0][i] == '+':
-            s = splitt[0][count: i-2]
-            part.append(s)
-            count = i + 2
-    part.append(splitt[0][count: len(splitt[0])])
+    for i in range(len(splitt)):
+        if splitt[i][len(splitt[i]) - 1] == '*':
+            splitt[i] = splitt[i][:len(splitt[i]) - 1]
+    #//////////////////////////////////////////////
 
-    for i in range(0, len(part)):
-        p = part[i].split("*")
-        part1.append(p)
+    for i in range(len(splitt)):
+        for j in range(len(splitt[i])):
+            for var in v:
+                if j < len(splitt[i]) and splitt[i][j] == var:
+                    if j == 0:
+                        splitt[i] = splitt[i][2:]
+                    else:
+                        splitt[i] = splitt[i][:j] + splitt[i][j+2:]
 
-    str2 = ""
-    if len(part1) > 1:
-        str2 += "(+ "
+    for k in range(len(splitt)):
+        part = []
+        part1 = []
+        count = 0
+        for i in  range(len(splitt[k])):
+            if splitt[k][i] == '+':
+                s = splitt[k][count: i-1]
+                part.append(s)
+                count = i + 2
+        part.append(splitt[k][count: len(splitt[k])])
+        for l in range(len(part)):
+            if part[l][len(part[l]) - 1] == '*':
+                part[l] = part[l][:len(part[l]) - 1]
 
-    for i in range(0, len(part1)):
-        if len(part1[i]) > 1:
-            str2 += '(* '
-            for j in range(0, len(part1[i])):
-                str2 += part1[i][j] + " "
+        for i in range(0, len(part)):
+            p = part[i].split("*")
+            part1.append(p)
 
-            str2 += ')'
-        else:
-            str2 += part[i] + " "
-    if len(part1)>1:
-        str2 += ")"
-    var1.append(str2)
-    part = []
-    for i in range(1, len(splitt)):
-        p = splitt[i].split("*")
-        part.append(p)
-
-    for i in range(0, len(part)):
         str2 = ""
-        if len(part[i]) > 2:
-            str2 += '(* '
-            for j in range(1, len(part[i])):
-                str2 += part[i][j]+" "
+        if len(part1) > 1:
+            str2 += "(+ "
 
-            str2 += ')'
-        elif len(part[i]) ==1:
-            str2 = part[i][0]
-        elif len(part[i]) == 2:
-            str2 = part[i][1]
+        for i in range(0, len(part1)):
+            if len(part1[i]) > 1:
+                str2 += '(* '
+                for j in range(0, len(part1[i])):
+                    str2 += part1[i][j] + " "
+
+                str2 += ')'
+            else:
+                str2 += part[i] + " "
+        if len(part1) > 1:
+            str2 += ")"
         var1.append(str2)
-    # print(part)
-    # print(var1 )
+
+    print(var1 )
     print('\n')
     return var1
 
@@ -182,6 +200,7 @@ def main():
                     if i < len(s) and s[i] == funcs[j]:
                         s = s[:i] + coefs[j][len(coefs[j]) - 1] + ' + ' + s[i + 1 + len(funcs[j]):]
                         i += 3 + len(coefs[j][len(coefs[j]) - 1])
+                        const = i
                         count = 0
                         left = 0
                         right = 0
@@ -194,6 +213,8 @@ def main():
                                 right += 1
                                 if left != 0 and left == right:
                                     count += 1
+                                    if check(variables, s[const]):
+                                        part = part[4:]
                                     if count == len(coefs[j]) - 1:
                                         s = s[:i - len(part) + 1] + part + "*" + coefs[j][count - 1] + s[i + 1:]
                                         i += len(part) - 5 + len(coefs[j][count - 1])
@@ -204,6 +225,7 @@ def main():
                                     part = ""
                                     left = 0
                                     right = 0
+                                    count = 0
                             if i < len(s) and left == right and check(variables, s[i]):
                                 count += 1
                                 if count != len(coefs[j]) - 1:
@@ -265,9 +287,6 @@ def main():
 
     va1 = formSMT(smt2[0], variables)
     va2 = formSMT(smt2[1], variables)
-
-    # print(va1)
-    # print(va2)
 
     mess += "\n"
     minx = min(len(va1), len(va2))

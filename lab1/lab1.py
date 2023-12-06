@@ -8,7 +8,7 @@ def check(arr, var):
     return False
 
 def formSMT(str, v):
-    print(str)
+
     var1 = []
     splitt = []
     cou = []
@@ -52,6 +52,7 @@ def formSMT(str, v):
                     splitt[j] = "wrong"
 
             j+=1
+
     for j in count:
         splitt.remove("wrong")
 
@@ -225,7 +226,7 @@ def main():
                                     part = ""
                                     left = 0
                                     right = 0
-                                    count = 0
+                                    count = 1
                             if i < len(s) and left == right and check(variables, s[i]):
                                 count += 1
                                 if count != len(coefs[j]) - 1:

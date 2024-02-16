@@ -1,0 +1,17 @@
+5
+x, t
+g(g(t, t), g(t, t))
+g(x, x) -> h(h(x))
+
+Original term: g(g(t, t), g(t, t))
+Step 1: 
+g(h(h(t)), g(t, t))
+h(h(g(t, t)))
+g(g(t, t), h(h(t)))
+Step 2: 
+h(h(h(h(t))))
+g(h(h(t)), h(h(t)))
+Step 3: 
+h(h(h(h(t))))
+Step 4: 
+Step 5: 

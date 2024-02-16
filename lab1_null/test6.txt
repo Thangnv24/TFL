@@ -1,0 +1,14 @@
+4
+x,t
+f(x, g(x))
+f(x, t) -> g(f(t, x))
+
+Original term: f(x, g(x))
+Step 1: 
+g(f(g(x), x))
+Step 2: 
+g(g(f(x, g(x))))
+Step 3: 
+g(g(g(f(g(x), x))))
+Step 4: 
+g(g(g(g(f(x, g(x))))))

@@ -1,0 +1,11 @@
+3
+x, t
+h(h(g(t, t)))
+g(x, x) -> h(h(x))
+
+
+Original term: h(h(g(t, t)))
+Step 1: 
+h(h(h(h(t))))
+Step 2: 
+Step 3: 

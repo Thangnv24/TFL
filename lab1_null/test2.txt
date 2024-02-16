@@ -1,0 +1,35 @@
+3
+x,t,y
+g(g(t, t), h(t))
+g(x,y) -> g(h(x), y)
+h(t) -> f
+
+Original term: g(g(t, t), h(t))
+Step 1: 
+g(g(t, t), f)
+g(g(h(t), t), h(t))
+g(h(h(t)), g(t, t))
+Step 2: 
+g(h(g(t, t)), h(h(t)))
+g(h(h(t)), g(h(t), t))
+g(f, g(t, t))
+g(g(f, t), h(t))
+g(g(h(t), h(t)), h(t))
+g(h(f), g(t, t))
+g(g(h(t), t), f)
+Step 3: 
+g(h(g(t, t)), f)
+g(f, g(h(t), t))
+g(g(f, h(t)), h(t))
+g(h(f), g(h(t), t))
+g(h(h(t)), g(h(t), h(t)))
+g(h(h(t)), g(f, t))
+g(g(f, t), f)
+g(f, h(h(t)))
+g(f, g(t, t))
+g(h(h(h(t))), h(g(t, t)))
+g(g(h(t), f), h(t))
+g(h(g(t, t)), h(f))
+g(g(h(t), h(t)), f)
+g(g(h(h(t)), h(t)), h(t))
+g(h(g(h(t), t)), h(h(t)))

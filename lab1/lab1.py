@@ -1,3 +1,5 @@
+import z3
+
 va1 = []
 va2 = []
 
@@ -292,14 +294,14 @@ def main():
     mess += "\n"
     minx = min(len(va1), len(va2))
     for i in range(minx):
-        mess += "(assert (>= " + va1[i] + " " + va2[i]+ ")\n\n"
+        mess += "(assert (>= " + va1[i] + " " + va2[i]+ "))\n\n"
     if len(va1) == minx:
         for i in range(minx, len(va2)):
-            mess += "(assert (>= 0 "+ va2[i] + ")\n\n"
+            mess += "(assert (>= 0 "+ va2[i] + "))\n\n"
 
     if len(va2) == minx:
         for i in range(minx, len(va1)):
-            mess += "(assert (>= "+ va1[i] + " 0" + ")\n\n"
+            mess += "(assert (>= "+ va1[i] + " 0" + "))\n\n"
 
     mess += "(assert (and "
     for i in range(len(coefs)):
@@ -334,6 +336,16 @@ def main():
     f = open("lab1.smt2", "w")
     f.write(mess)
     f.close()
+    smt_file = "lab1.smt2"
+    s = z3.Solver()
+    s.from_file(smt_file)
+
+    result = s.check()
+
+    if result == z3.sat:
+        model = s.model()
+        for d in model.decls():
+            print(f"{d.name()} = {model[d]}")
 
 if __name__ == '__main__':
     print('Example input: f(g(x, y)) -> g(x, y)\n')

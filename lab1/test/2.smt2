@@ -5,11 +5,11 @@
 (declare-fun t3 () Int)
 (declare-fun t4 () Int)
 
-(assert (>= (+  t1 (* t4 t0 ))  t4 )
+(assert (>= (+  t1 (* t4 t0 ))  t4 ))
 
-(assert (>= (* t2 t0 ) t2)
+(assert (>= (* t2 t0 ) t2))
 
-(assert (>= (* t2 t0 )(* t3 t0 ) t3)
+(assert (>= (* t2 t0 )(* t3 t0 ) t3))
 
 (assert (and (>= t0 1) (>= t1 0) (>= t2 1) (>= t3 1) (>= t4 0)))
 

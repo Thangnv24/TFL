@@ -10,11 +10,11 @@
 (declare-fun t8 () Int)
 (declare-fun t9 () Int)
 
-(assert (>= (+  t1 (* t3 t0 )(* t6 t2 t0 ))  t9 )
+(assert (>= (+  t1 (* t3 t0 )(* t6 t2 t0 ))  t9 ))
 
-(assert (>= (* t4 t2 t0 ) t8)
+(assert (>= (* t4 t2 t0 ) t8))
 
-(assert (>= (* t5 t2 t0 ) t7)
+(assert (>= (* t5 t2 t0 ) t7))
 
 (assert (and (>= t0 1) (>= t1 0) (>= t2 1) (>= t3 0) (>= t4 1) (>= t5 1) (>= t6 0) (>= t7 1) (>= t8 1) (>= t9 0)))
 

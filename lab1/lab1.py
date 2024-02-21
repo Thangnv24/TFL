@@ -1,4 +1,5 @@
 import z3
+import sys
 
 va1 = []
 va2 = []
@@ -10,7 +11,6 @@ def check(arr, var):
     return False
 
 def formSMT(str, v):
-
     var1 = []
     splitt = []
     cou = []
@@ -20,9 +20,10 @@ def formSMT(str, v):
         else:
             for i in range(len(str)-1):
                 if str[i] == j and str[i+1] == '*':
-                    cou.append(i-4)
-    cou.append(len(str)-1)
+                    cou.append(i-3)
+    cou.append(len(str))
     cou.sort()
+    # print(cou)
     th = 1
     for i in range(len(cou)):
         if cou[i] != 0:
@@ -35,7 +36,7 @@ def formSMT(str, v):
         else:
             while cou[th] == 0:
                 th += 1
-            splitt.append(str[cou[i]+4: cou[th]])
+            splitt.append(str[cou[i]+3: cou[th]])
             th += 1
     for i in range(len(splitt)):
         for j in range(len(splitt[i])):
@@ -43,6 +44,8 @@ def formSMT(str, v):
                 if j < len(splitt[i]) and splitt[i][j] == '+' and splitt[i][0] == var:
                     splitt[0] += splitt[i][j-1:]
                     splitt[i] = splitt[i][:j-1]
+    # print(splitt)
+    # print('thang')
     count = []
     for i in range(len(splitt)):
         j = i + 1
@@ -111,19 +114,25 @@ def formSMT(str, v):
             str2 += ")"
         var1.append(str2)
 
-    print(var1 )
-    print('\n')
+    # print(var1 )
+    # print('\n')
     return var1
 
 def main():
     inp = ""
-    while True:
-        line = input()
-        if len(line) == 0:
-            break
-        inp += ' ' + line
+    # while True:
+    #     line = input()
+    #     if len(line) == 0:
+    #         break
+    #     inp += ' ' + line
 
-    # print(inp)
+    for line in sys.stdin:
+        if len(line) == 1:
+            break
+        inp += line
+
+    inp = inp[:len(inp) - 1]
+    print(inp)
     funcs = []
     variables = []
 
@@ -136,7 +145,18 @@ def main():
 
     #
     divide = []
-    divide.append(inp.split("->"))
+    thangs = []
+    thang = ""
+    for s in inp:
+        if s == '\n':
+            thangs.append(thang)
+            thang = ""
+            continue
+        thang += s
+    thangs.append(thang)
+
+    for s in thangs:
+        divide.append(s.split(" -> "))
     # print(divide)
     scheme = []
     for t in divide:
@@ -147,7 +167,7 @@ def main():
                 if check(funcs, f[i]) and f[i + 1] == '(':
                     f = f[:i] + '(' + f[i] + ' ' + f[i + 2:]
             scheme.append(f.replace("  ", " "))
-
+    print(scheme)
     #
     coefcounter = 0
     coefs = []
@@ -287,21 +307,22 @@ def main():
                         result += v3[len(v3) - 1] + "*" + multi
                         s = s[:start] + result[:len(result)] + s[end:]
         smt2.append(s)
+    # print(smt2)
 
-    va1 = formSMT(smt2[0], variables)
-    va2 = formSMT(smt2[1], variables)
+    for i in range(0, len(smt2), 2):
+        v1 = formSMT(smt2[i], variables)
+        va1.append(v1)
+        v2 = formSMT(smt2[i+1], variables)
+        va2.append(v2)
 
+    # print(va1)
+    # print(va2)
     mess += "\n"
-    minx = min(len(va1), len(va2))
-    for i in range(minx):
-        mess += "(assert (>= " + va1[i] + " " + va2[i]+ "))\n\n"
-    if len(va1) == minx:
-        for i in range(minx, len(va2)):
-            mess += "(assert (>= 0 "+ va2[i] + "))\n\n"
-
-    if len(va2) == minx:
-        for i in range(minx, len(va1)):
-            mess += "(assert (>= "+ va1[i] + " 0" + "))\n\n"
+    for k in range(len(va1)):
+        mess += ""
+        minx = len(va1[k])
+        for i in range(minx):
+            mess += "(assert (>= " + va1[k][i] + " " + va2[k][i]+ "))\n\n"
 
     mess += "(assert (and "
     for i in range(len(coefs)):
@@ -311,10 +332,11 @@ def main():
         if i != len(coefs) - 1:
             mess += " "
     mess += "))\n\n"
-    mess += "(assert (or "
-    for i in range(minx):
-        mess += "(> " + va1[i] + " " + va2[i]+ ") "
-    mess += "))\n\n"
+    for k in range(len(va1)):
+        mess += "(assert (or "
+        for i in range(minx):
+            mess += "(> " + va1[k][i] + " " + va2[k][i]+ ") "
+        mess += "))\n\n"
     mess += "(assert (and "
     for i in range(len(coefs)):
         mess += "(or "
@@ -346,6 +368,8 @@ def main():
         model = s.model()
         for d in model.decls():
             print(f"{d.name()} = {model[d]}")
+    elif result == z3.unsat:
+        print("Constraints are not satisfied")
 
 if __name__ == '__main__':
     print('Example input: f(g(x, y)) -> g(x, y)\n')

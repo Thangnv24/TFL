@@ -19,7 +19,7 @@ def sp(str):
 
     str = str[:n]
     str2 = []
-    if len(count2) > 0:
+    if len(count2)>0:
         str2.append(str[2:count2[0]])
         for i in range(1, len(count2)):
             str2.append(str[count2[i-1] + 2: count2[i]])
@@ -51,18 +51,19 @@ def rep(str, s1, s2):
 
 def check2(str, rule, var):
     rules = []
-    rules.append(rule.split(" -> "))
-    thang = rules[0]
+    rules += rule.split("->")
+    for i in range(len(rules)):
+        rules[i] = rules[i].strip()
     count = 0
     for i in range(len(str)-1):
-        if str[i] == thang[0][0]:
+        if str[i] == rules[0][0]:
             count += 1
     j = -1
     str2 = []
     for t in range(count):
         cnt = -1
         for i in range(len(str)):
-            if str[i] == thang[0][0] and j < i and cnt < 0:
+            if str[i] == rules[0][0] and j < i and cnt < 0:
                 j = i
                 cnt = 0
             if str[i] == '(' and cnt >= 0:
@@ -81,12 +82,12 @@ def check2(str, rule, var):
     # print(st)
 
     check_rule = []
-    s = thang[0]
+    s = rules[0]
     check_rule = sp(s)
     # print(check_rule)
 
     for t in range(len(st)):
-        s = thang[1]
+        s = rules[1]
         if check(s, var):
             if len(check_rule) > 1:
                 if check_rule[0] == check_rule[1]:
@@ -136,10 +137,14 @@ def main():
     h(t) -> f
     """
     n = int(input("n: "))
+
     variable = input("Variables: ")
     variables = []
     variables += variable.split(",")
+    for i in range(len(variables)):
+        variables[i] = variables[i].strip()
     print(variables)
+
     str = input("Start: ")
     print("Rules: ")
     rules = []
@@ -170,5 +175,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 

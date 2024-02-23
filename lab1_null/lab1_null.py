@@ -5,27 +5,27 @@ def check(arr, var):
                 return True
     return False
 
-def sp(str):
+def sp(term):
     count = 0
-    n = len(str)-1
+    n = len(term)-1
     count2 = []
-    for i in range(2, len(str)-1):
-        if str[i] == '(':
+    for i in range(2, len(term)-1):
+        if term[i] == '(':
             count += 1
-        if str[i] == ')':
+        if term[i] == ')':
             count -= 1
-        if count == 0 and str[i] == ',':
+        if count == 0 and term[i] == ',':
             count2.append(i)
 
-    str = str[:n]
+    term = term[:n]
     str2 = []
-    if len(count2)>0:
-        str2.append(str[2:count2[0]])
+    if len(count2) > 0:
+        str2.append(term[2:count2[0]])
         for i in range(1, len(count2)):
-            str2.append(str[count2[i-1] + 2: count2[i]])
-        str2.append(str[count2[len(count2) - 1] + 2: n])
+            str2.append(term[count2[i-1] + 1: count2[i]])
+        str2.append(term[count2[len(count2) - 1] + 1: n])
     else:
-        str2.append(str[2:n])
+        str2.append(term[2:n])
     return str2
 
 def find(s, s1):
@@ -39,39 +39,39 @@ def find(s, s1):
         start_index = index + len(s1)
     return part
 
-def rep(str, s1, s2):
-    part = find(str, s1)
+def rep(term, s1, s2):
+    part = find(term, s1)
     part_ex = []
     for j in range(len(part)):
-        p = str[:part[j]] + s2 + str[part[j] + len(s1):]
+        p = term[:part[j]] + s2 + term[part[j] + len(s1):]
         part_ex.append(p)
     return part_ex
 
 #
-
-def check2(str, rule, var):
+def check2(term, rule, var):
     rules = []
+    rule = rule.replace(' ', '')
     rules += rule.split("->")
-    for i in range(len(rules)):
-        rules[i] = rules[i].strip()
+    # for i in range(len(rules)):
+    #     rules[i] = rules[i].strip()
     count = 0
-    for i in range(len(str)-1):
-        if str[i] == rules[0][0]:
+    for i in range(len(term)-1):
+        if term[i] == rules[0][0]:
             count += 1
     j = -1
     str2 = []
     for t in range(count):
         cnt = -1
-        for i in range(len(str)):
-            if str[i] == rules[0][0] and j < i and cnt < 0:
+        for i in range(len(term)):
+            if term[i] == rules[0][0] and j < i and cnt < 0:
                 j = i
                 cnt = 0
-            if str[i] == '(' and cnt >= 0:
+            if term[i] == '(' and cnt >= 0:
                 cnt += 1
-            if str[i] == ')' and cnt >= 0:
+            if term[i] == ')' and cnt >= 0:
                 cnt -= 1
                 if cnt == 0:
-                    str2.append(str[j: i+1])
+                    str2.append(term[j: i+1])
                     cnt = -1
     # print(str2)
 
@@ -81,7 +81,6 @@ def check2(str, rule, var):
         st.append(sp(s))
     # print(st)
 
-    check_rule = []
     s = rules[0]
     check_rule = sp(s)
     # print(check_rule)
@@ -97,19 +96,20 @@ def check2(str, rule, var):
                         s = '' #str2[t]
                 else:
                     for i in range(len(var)):
-                        s = s.replace(var[i], st[t][i])
+                        s = s.replace(check_rule[i], st[t][i])
 
             else:
                 for i in range(len(var)):
-                    s = s.replace(var[i], st[t][i])
+                    s = s.replace(check_rule[i], st[t][i])
         str2_ex.append(s)
     # print(str2_ex)
     s_final = []
     for i in range(len(st)):
-        s = rep(str, str2[i], str2_ex[i])
+        s = rep(term, str2[i], str2_ex[i])
         s_final += s
     s_final = list(set(s_final))
     s_final = [x for x in s_final if x != '']
+    # print(term)
     # print(s_final)
     return s_final
 
@@ -139,13 +139,12 @@ def main():
     n = int(input("n: "))
 
     variable = input("Variables: ")
+    variable = variable.replace(' ', '')
     variables = []
     variables += variable.split(",")
-    for i in range(len(variables)):
-        variables[i] = variables[i].strip()
-    print(variables)
 
-    str = input("Start: ")
+    term = input("Start: ")
+    term = term.replace(' ', '')
     print("Rules: ")
     rules = []
     while True:
@@ -153,24 +152,42 @@ def main():
         if rule == "":
             break
         rules.append(rule)
-    # print(rules)
 
     xx = []
-    xx.append(str)
-    print('Original term: ' + str)
-
+    xx.append(term)
+    print('Original term: ' + term)
+    # print(len(xx))
+    # for j in range(len(xx)):
+    # print(xx[0])
+    # check2('f(t,z)', 'f(x,y) -> f(y,x)', ['x', 'y'])
+    # for rule in rules:2
+    # x,y,z
+    # f(t,z)
+    # f(x,y) -> f(y,x)
+    # f(z,x) -> f(z,z)
+    # part = valu(rules[0], variables)
+    # check2(xx[0], rules[0], part)
+    # print(rules[1])
+    # part = valu(rules[1], variables)
+    # print(rules[1])
+    # print(part)
+    # check2(xx[0], rules[1], part)
     for i in range(n):
         print("Step {}: ".format(i+1))
         st = []
         for j in range(len(xx)):
             for rule in rules:
                 part = valu(rule, variables)
+                # print(part)
                 s = check2(xx[j], rule, part)
                 st += s
+        # print(st)
         st = list(set(st))
+        # print(st)
         for s in st:
             print(s)
         xx = st
+
     # print(st)
 
 if __name__ == "__main__":

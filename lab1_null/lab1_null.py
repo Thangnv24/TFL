@@ -105,8 +105,9 @@ def check2(term, rule, var):
     # print(str2_ex)
     s_final = []
     for i in range(len(st)):
-        s = rep(term, str2[i], str2_ex[i])
-        s_final += s
+        if str2_ex[i] != '':
+            s = rep(term, str2[i], str2_ex[i])
+            s_final += s
     s_final = list(set(s_final))
     s_final = [x for x in s_final if x != '']
     # print(term)
@@ -160,11 +161,6 @@ def main():
     # for j in range(len(xx)):
     # print(xx[0])
     # check2('f(t,z)', 'f(x,y) -> f(y,x)', ['x', 'y'])
-    # for rule in rules:2
-    # x,y,z
-    # f(t,z)
-    # f(x,y) -> f(y,x)
-    # f(z,x) -> f(z,z)
     # part = valu(rules[0], variables)
     # check2(xx[0], rules[0], part)
     # print(rules[1])
@@ -187,12 +183,10 @@ def main():
         for s in st:
             print(s)
         xx = st
-
     # print(st)
 
 if __name__ == "__main__":
     main()
-
 
 
 

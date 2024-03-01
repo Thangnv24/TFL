@@ -1,0 +1,18 @@
+3
+x,y,z,t
+f(h(h(g(h(x),y))))
+h(g(x,y)) -> f(x,h(y))
+h(h(x)) -> g(x)
+f(x) -> k
+
+result:
+Original term: f(h(h(g(h(x),y))))
+Step 1: 
+f(g(g(h(x),y)))
+f(h(f(h(x),h(y))))
+k
+Step 2: 
+f(h(k))
+k
+Step 3: 
+k

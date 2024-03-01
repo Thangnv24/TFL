@@ -1,3 +1,24 @@
+def check_func(term, var):
+    funcs = ''
+    term = term.replace(' ', '')
+    term = term.replace(',', '')
+    chars = []
+    chars += var
+    chars += ')'
+    for i in range(len(term)):
+        if term[i] not in chars:
+            funcs += term[i]
+
+    return funcs
+
+def double_check(s1, s2):
+    for i in range(len(s1)):
+        for j in range(i, len(s1)):
+            if s1[i] == s1[j] and s2[i] != s2[j]:
+                return False
+                break
+    return True
+
 def check(arr, var):
     for a in arr:
         for v in var:
@@ -5,7 +26,7 @@ def check(arr, var):
                 return True
     return False
 
-def sp(term):
+def split_vars(term):
     count = 0
     n = len(term)-1
     count2 = []
@@ -28,6 +49,14 @@ def sp(term):
         str2.append(term[2:n])
     return str2
 
+def split_vars2(term, var):
+    s = []
+    for i in range(len(term)):
+        for v in var:
+            if term[i] == v:
+                s += v
+    return s
+
 def find(s, s1):
     part = []
     start_index = 0
@@ -39,7 +68,7 @@ def find(s, s1):
         start_index = index + len(s1)
     return part
 
-def rep(term, s1, s2):
+def replace_var(term, s1, s2):
     part = find(term, s1)
     part_ex = []
     for j in range(len(part)):
@@ -47,19 +76,16 @@ def rep(term, s1, s2):
         part_ex.append(p)
     return part_ex
 
-#
 def check2(term, rule, var):
     rules = []
     rule = rule.replace(' ', '')
     rules += rule.split("->")
-    # for i in range(len(rules)):
-    #     rules[i] = rules[i].strip()
     count = 0
     for i in range(len(term)-1):
         if term[i] == rules[0][0]:
             count += 1
     j = -1
-    str2 = []
+    func_old = []
     for t in range(count):
         cnt = -1
         for i in range(len(term)):
@@ -71,19 +97,57 @@ def check2(term, rule, var):
             if term[i] == ')' and cnt >= 0:
                 cnt -= 1
                 if cnt == 0:
-                    str2.append(term[j: i+1])
+                    func_old.append(term[j: i+1])
                     cnt = -1
-    # print(str2)
-
-    str2_ex = []
-    st = []
-    for s in str2:
-        st.append(sp(s))
-    # print(st)
+    # print(func_old)
 
     s = rules[0]
-    check_rule = sp(s)
-    # print(check_rule)
+    s_rule = check_func(s, var)
+    check_rule = split_vars2(s, var)
+    func_old_checked = []
+    for f in func_old:
+        f_checked = check_func(f, var)
+        if f_checked.find(s_rule) == 0:
+            func_old_checked.append(f)
+
+    # print(func_old_checked)
+
+    func_new = []
+    sts = []
+    for s in func_old_checked:
+        cnt1 = s.find(s_rule)
+        cnt2 = 0
+        count = 1
+        for i in range(cnt1 + 2, len(s)):
+            if s[i] == '(':
+                count += 1
+            if s[i] == ')':
+                count -= 1
+                if count == 0:
+                    cnt2 = i
+        str = s[cnt1: cnt2+1]
+        sts.append(str)
+
+    # print(sts)
+    sts2 = []
+    for s in sts:
+        cnt1 = len(s_rule)
+        cnt2 = 0
+        count = 1
+        for i in range(cnt1, len(s)):
+            if s[i] == '(':
+                count += 1
+            if s[i] == ')':
+                count -= 1
+                if count == 0:
+                    cnt2 = i
+        str = s[cnt1-2: cnt2 + 1]
+        sts2.append(str)
+
+    st = []
+    for s in sts2:
+        st.append(split_vars(s))
+    # print(st)
 
     for t in range(len(st)):
         s = rules[1]
@@ -95,29 +159,30 @@ def check2(term, rule, var):
                     else:
                         s = '' #str2[t]
                 else:
-                    for i in range(len(var)):
+                    for i in range(len(check_rule)):
                         s = s.replace(check_rule[i], st[t][i])
 
             else:
-                for i in range(len(var)):
+                for i in range(len(check_rule)):
                     s = s.replace(check_rule[i], st[t][i])
-        str2_ex.append(s)
-    # print(str2_ex)
+
+        func_new.append(s)
+    # print(func_new)
     s_final = []
     for i in range(len(st)):
-        if str2_ex[i] != '':
-            s = rep(term, str2[i], str2_ex[i])
+        if func_new[i] != '':
+            s = replace_var(term, func_old_checked[i], func_new[i])
             s_final += s
+
     s_final = list(set(s_final))
     s_final = [x for x in s_final if x != '']
-    # print(term)
     # print(s_final)
     return s_final
 
-# check2("g(g(t, t), h(t))", "h(x) -> f", ['x'])
-# check2("g(g(t, t), g(t, t))", "g(x, x) -> h(h(x)))", ['x'])
-# check2("h(h(h(h(t))))", "g(x, x) -> h(h(x)))", ['x'])
-# check2("g(g(t, t), h(t))", "g(x,y) -> g(h(x), y)", ['x', 'y'])
+# str = 'f(h(h(g(h(x),y))))'
+# check2(str, 'h(g(x,y)) -> g(y,x)', ['x', 'y', 't', 'z'])
+# str = 'f(t,z)'
+# check2(str, 'f(x,y) -> f(y,x)', ['x', 'y', 't', 'z'])
 
 def valu(rule, variables):
     part = []
@@ -157,36 +222,19 @@ def main():
     xx = []
     xx.append(term)
     print('Original term: ' + term)
-    # print(len(xx))
-    # for j in range(len(xx)):
-    # print(xx[0])
-    # check2('f(t,z)', 'f(x,y) -> f(y,x)', ['x', 'y'])
-    # part = valu(rules[0], variables)
-    # check2(xx[0], rules[0], part)
-    # print(rules[1])
-    # part = valu(rules[1], variables)
-    # print(rules[1])
-    # print(part)
-    # check2(xx[0], rules[1], part)
     for i in range(n):
         print("Step {}: ".format(i+1))
         st = []
         for j in range(len(xx)):
             for rule in rules:
                 part = valu(rule, variables)
-                # print(part)
                 s = check2(xx[j], rule, part)
                 st += s
-        # print(st)
+
         st = list(set(st))
-        # print(st)
         for s in st:
             print(s)
         xx = st
-    # print(st)
 
 if __name__ == "__main__":
     main()
-
-
-

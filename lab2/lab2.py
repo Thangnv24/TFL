@@ -8,15 +8,19 @@ def optimize(regex):
     # tree.print_node()
     # print()
     tree = sf.ssnf(tree)
+    # tree.print_node()
+    # print()
     tree = ai.aci(tree)
+    # tree.print_node()
+    # print()
     str = ai.back_tracking(tree)
     return str
 
 def main():
     # regex = input()
-    print("Regex optimized: ")
-    str = optimize('(((bb|b)*|(ab|ca)*)|(bcab|acc)**)c')
-    print(str)
+    # print("Regex optimized: ")
+    # str = optimize('(((bb|b)*|(ab|ca)*)|(bcab|acc)**)c')
+    # print(str)
     file_path = "tests.txt"
 
     lines = []
@@ -26,7 +30,6 @@ def main():
             lines.append(line.strip())
     if '' in lines:
         lines.remove('')
-
     mess = ""
     for line in lines:
         mess += line
@@ -38,6 +41,7 @@ def main():
     f = open("result.txt", "w")
     f.write(mess)
     f.close()
+    # print(mess)
 
 
 if __name__ == "__main__":

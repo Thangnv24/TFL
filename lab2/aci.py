@@ -1,33 +1,6 @@
 import parse as pa
 import ssnf as sf
 
-def back_tracking(node):
-    if node is None:
-        return ""
-
-    a = back_tracking(node.left)
-    b = back_tracking(node.right) if node.right else ""
-
-    if node.data == '.':
-        if node.left.data == '|':
-            a = '(' + a + ')'
-        if node.right and node.right.data == '|':
-            b = '(' + b + ')'
-        return a + b
-
-    elif node.data == '*':
-        if node.left.data == '|' or node.left.data == '.':
-            return '(' + a + ')*'
-        return a + '*'
-
-    elif node.data == '|':
-        if a in b:
-            return b
-        else:
-            return a + '|' + b
-    else:
-        return node.data
-
 def aci(node):
     if node is None:
         return None
@@ -59,6 +32,31 @@ def aci(node):
                     node.left, node.right.left = node.right.left, node.left
 
         return node
+
+def back_tracking(node):
+    if node is None:
+        return ""
+
+    a = back_tracking(node.left)
+    b = back_tracking(node.right) if node.right else ""
+
+    if node.data == '.':
+        if node.left.data == '|':
+            a = '(' + a + ')'
+        if node.right and node.right.data == '|':
+            b = '(' + b + ')'
+        return a + b
+
+    elif node.data == '*':
+        if node.left.data == '|' or node.left.data == '.':
+            return '(' + a + ')*'
+        return a + '*'
+
+    elif node.data == '|':
+        elements = set(a.split('|') + b.split('|'))
+        return '|'.join(sorted(elements))
+    else:
+        return node.data
 
 # regex = '((b|cc)|(cc|cb))**(cc|a**)cca(b**|c)'
 # regex = '(aacb|bcca)((b|b)|(a|bc))b**b**'

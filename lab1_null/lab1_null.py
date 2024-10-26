@@ -11,14 +11,6 @@ def check_func(term, var):
 
     return funcs
 
-def double_check(s1, s2):
-    for i in range(len(s1)):
-        for j in range(i, len(s1)):
-            if s1[i] == s1[j] and s2[i] != s2[j]:
-                return False
-                break
-    return True
-
 def check(arr, var):
     for a in arr:
         for v in var:
@@ -154,7 +146,7 @@ def check2(term, rule, var):
         if check(s, var):
             if len(check_rule) > 1:
                 if check_rule[0] == check_rule[1]:
-                    if st[t][0] == st[t][1]:
+                    if len(st[t]) > 1 and st[t][0] == st[t][1]:
                         s = s.replace(var[0], st[t][0])
                     else:
                         s = '' #str2[t]
@@ -167,6 +159,7 @@ def check2(term, rule, var):
                     s = s.replace(check_rule[i], st[t][i])
 
         func_new.append(s)
+    # print(func_old_checked)
     # print(func_new)
     s_final = []
     for i in range(len(st)):
@@ -175,7 +168,7 @@ def check2(term, rule, var):
             s_final += s
 
     s_final = list(set(s_final))
-    s_final = [x for x in s_final if x != '']
+    s_final = [x for x in s_final if x != '' and x != term]
     # print(s_final)
     return s_final
 

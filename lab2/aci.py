@@ -1,71 +1,106 @@
 import parse as pa
 import ssnf as sf
 
+def rotate(node):
+    if node.data == None:
+        return
+    temp = node.left
+    node.left = node.right
+    node.right = temp
+
+
 def aci(node):
+    op = ['|', '.', '*']
     if node is None:
-        return None
-
-    if node.data != '|':
+        return
+    elif node.data != '|':
+        # Recursively process child branches
         node.left = aci(node.left)
         node.right = aci(node.right)
-        return pa.Node(back_tracking(node))
-
+        return pa.Node(back_tracking(node), None, None)
     else:
+        # operator '|'
         node.left = aci(node.left)
         node.right = aci(node.right)
 
-        a = node.left.data
-        b = node.right.data
+        left = node.left.data
+        right = node.right.data
 
-        if a and b not in sf.chars and a > b:
-            node.left, node.right = node.right, node.left
+        # Check idempotency: A | A -> A
+        if left == right:
+            return node.left
 
-        if a == '|':
+        # Sort branch order if both are characters
+        if left not in op and right not in op:
+            if left > right:
+                rotate(node)
+
+        # Check if the child branch is '|'
+        if left == '|':
             node = pa.Node(node.data, aci(node.left), aci(node.right))
 
-        if b == '|':
+        if right == '|':
             node = pa.Node(node.data, aci(node.left), aci(node.right))
-            s1 = node.right.left.data
-            s2 = node.left.data
-            if s1 not in sf.chars:
-                if s1 < s2:
-                    node.left, node.right.left = node.right.left, node.left
+            right = node.right.left.data
+            left = node.left.data
+            if right not in op:
+                if left > right:
+                    temp = node.left
+                    node.left = node.right.left
+                    node.right.left = temp
+            node = pa.Node(node.data, aci(node.left), aci(node.right))
 
         return node
 
 def back_tracking(node):
-    if node is None:
-        return ""
-
-    a = back_tracking(node.left)
-    b = back_tracking(node.right) if node.right else ""
-
-    if node.data == '.':
-        if node.left.data == '|':
-            a = '(' + a + ')'
-        if node.right and node.right.data == '|':
-            b = '(' + b + ')'
-        return a + b
-
-    elif node.data == '*':
-        if node.left.data == '|' or node.left.data == '.':
-            return '(' + a + ')*'
-        return a + '*'
-
-    elif node.data == '|':
-        elements = set(a.split('|') + b.split('|'))
-        return '|'.join(sorted(elements))
+    s = ""
+    if node.left != None:
+        left = back_tracking(node.left)
+        right = None
+        if node.right != None:
+            right = back_tracking(node.right)
+        if node.data == '.':
+            if node.left.data == '|':
+                s = '(' + left + ')' + right
+                if node.right.data == '|':
+                    s = '(' + left + ')' + '(' + right + ')'
+                node = pa.Node(s, None, None)
+                return s
+            if node.right.data == '|':
+                s = left + '(' + right + ')'
+                node = pa.Node(s, None, None)
+                return s
+            else:
+                s = left + right
+                node = pa.Node(s, None, None)
+                return s
+        elif node.data == '*':
+            if node.left.data == '|' or node.left.data == '.':
+                s = "(" + left + ")" + "*"
+            else:
+                s = left + "*"
+            node = pa.Node(s, None, None)
+            return s
+        elif node.data == '|':
+            if left in right:
+                s = right
+            else:
+                s = left + '|' + right
+            node = pa.Node(s, None, None)
+            return s
+        else:
+            return node.data
     else:
-        return node.data
+        return str(node.data)
 
 # regex = '((b|cc)|(cc|cb))**(cc|a**)cca(b**|c)'
 # regex = '(aacb|bcca)((b|b)|(a|bc))b**b**'
 # regex = '(((bb|b)*|(ab|ca)*)|ac(bcab|acc)**)c'
 # regex = regex.replace(' ', '')
 # print(regex)
-# tree = pa.parse_regex(regex)
-# tree.print_node()
+# node = pa.parse_regex(regex)
+# node.print_node()
 # print()
-# tree2 = sf.ssnf(tree)
-# tree3 = aci(tree2)
-# print(back_tracking(tree3))
+# node2 = sf.ssnf(node)
+# node3 = aci(node2)
+# print(back_tracking(node3))

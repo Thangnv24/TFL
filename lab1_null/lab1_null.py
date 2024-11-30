@@ -11,6 +11,18 @@ def check_func(term, var):
 
     return funcs
 
+def replace_all(s, str1, str2):
+    temp_map = {old: f"__temp_{i}__" for i, old in enumerate(str1)}
+    final_map = {f"__temp_{i}__": new for i, new in enumerate(str2)}
+
+    for old, temp in temp_map.items():
+        s = s.replace(old, temp)
+
+    for temp, new in final_map.items():
+        s = s.replace(temp, new)
+
+    return s
+
 def check(arr, var):
     for a in arr:
         for v in var:
@@ -139,8 +151,12 @@ def check2(term, rule, var):
     st = []
     for s in sts2:
         st.append(split_vars(s))
+    # print('st')
     # print(st)
-
+    # print("check_rule")
+    # print(check_rule)
+    # print('rules')
+    # print(rules)
     for t in range(len(st)):
         s = rules[1]
         if check(s, var):
@@ -149,14 +165,16 @@ def check2(term, rule, var):
                     if len(st[t]) > 1 and st[t][0] == st[t][1]:
                         s = s.replace(var[0], st[t][0])
                     else:
-                        s = '' #str2[t]
+                        s = ''
                 else:
-                    for i in range(len(check_rule)):
-                        s = s.replace(check_rule[i], st[t][i])
+                    # for i in range(len(check_rule)):
+                    s = replace_all(s, check_rule, st[t])
+                        # s = replace_var(s, check_rule[i], st[t][i])
 
             else:
-                for i in range(len(check_rule)):
-                    s = s.replace(check_rule[i], st[t][i])
+                s = replace_all(s, check_rule, st[t])
+                # for i in range(len(check_rule)):
+                #     s = s.replace(check_rule[i], st[t][i])
 
         func_new.append(s)
     # print(func_old_checked)

@@ -1,14 +1,8 @@
-b**bcba**c((a|c)(a|c))a**b**a**a**c
-Regex optimized: b*bcba*c(a|c)(a|c)a*b*a*a*c
-b**bcbca**c((a|c)|(a|c))a
-Regex optimized: b*bcbca*c(a|c)a
-((b|cc)|(cc|cb))**(cc|a**)cca(b**|c)
-Regex optimized: (b|cb|cc)*(a*|cc)cca(b*|c)
-a*a|b|a*c
-Regex optimized: a*a|a*c|b
-(abc(cde)*)*
-Regex optimized: abccde**
-bbccbcabb((bb|b)|(cb|c)|c)**
-Regex optimized: bbccbcabb(b|bb|c|cb)*
-c**a**aacb**acbbcba**(c|a)
-Regex optimized: c*a*aacb*acbbcba*(a|c)
+(a|b|a(a*|c*)*)*|(a|b|c)*
+Regex optimized: (a(a|c)*|b)*|(a|b|c)*
+(a|b|a(a*|c*)*)*
+Regex optimized: (a(a|c)*|b)*
+b**bcba**c((a|c)|(a|c))a**b*
+Regex optimized: b*bcba*c(a|c)a*b*
+(a|b|c)|(a|b|c)
+Regex optimized: a|b|c

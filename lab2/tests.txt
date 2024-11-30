@@ -1,7 +1,4 @@
-b**bcba**c((a|c)(a|c))a**b**a**a**c
-b**bcbca**c((a|c)|(a|c))a
-((b|cc)|(cc|cb))**(cc|a**)cca(b**|c)
-a*a|b|a*c
-(abc(cde)*)*
-bbccbcabb((bb|b)|(cb|c)|c)**
-c**a**aacb**acbbcba**(c|a)
+(a|b|a(a*|c*)*)*|(a|b|c)*
+(a|b|a(a*|c*)*)*
+b**bcba**c((a|c)|(a|c))a**b*
+(a|b|c)|(a|b|c)

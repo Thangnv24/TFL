@@ -15,58 +15,69 @@ class Node:
                 self.right.print_node()
 
 def parse_regex(regex):
-    index = 0
-
-    def parse_star():
-        nonlocal index
-        subtree = parse_parentheses()
-        while index < len(token_list) and token_list[index] == '*':
-            index += 1
-            subtree = Node('*', subtree)
-        return subtree
-
-    def parse_parentheses():
-        nonlocal index
-        if index < len(token_list):
-            token = token_list[index]
-            index += 1
-            if token == '(':
-                subtree = parse_all()
-                assert token_list[index] == ')'
-                index += 1
-                return subtree
-            else:
-                return Node(token)
+    def check_char(token_list):
+        if token_list[0] != '|' and token_list[0] != 'ε' and token_list[0] != '*' and token_list[0] != ')':
+            return True
         else:
-            return None
+            return False
 
-    def parse_concat():
-        nonlocal index
-        subtree = parse_star()
-        while index < len(token_list) and token_list[index] not in '|)':
-            subtree = Node('.', subtree, parse_concat())
-        return subtree
+    def parse_token(token_list, expected):
+        if token_list[0] == expected:
+            del token_list[0]
+            return True
+        else:
+            return False
 
-    def parse_all():
-        nonlocal index
-        subtree = parse_concat()
-        if index < len(token_list) and token_list[index] == '|':
-            index += 1
-            subtree = Node('|', subtree, parse_all())
-        return subtree
+    def parse_char(token_list):
+        if parse_token(token_list, '('):
+            # get the subexpression
+            x = parse_all(token_list)
+            # remove the closing parenthesis
+            parse_token(token_list, ')')
+            return x
+        else:
+            x = token_list[0]
+            if type(x) != type('') or x == 'end': return None
+            token_list[0:1] = []
+            return Node(x, None, None)
 
+    def parse_star(token_list):
+        a = parse_char(token_list)
+        if parse_token(token_list, '*'):
+            subtree = a
+            while token_list[0] == '*':
+                helper = Node('*', subtree, None)
+                subtree = helper
+                token_list[0:1] = []
+            return Node('*', subtree, None)
+        else:
+            return a
+
+    def parse_concat(token_list):
+        a = parse_star(token_list)
+        if check_char(token_list):
+            b = parse_concat(token_list)
+            return Node('.', a, b)
+        else:
+            return a
+
+    def parse_all(token_list):
+        a = parse_concat(token_list)
+        if parse_token(token_list, '|'):
+            b = parse_all(token_list)
+            return Node('|', a, b)
+        else:
+            return a
 
     token_list = list(regex)
-    # return parse_star()
-    # return parse_concat()
-    # return parse_regex()
-    return parse_all()
+    token_list.append('ε')
+    return parse_all(token_list)
 
-
+# regex = '(a|b|a(a*|c*)*)*|(a|b|c)*'
 # regex = 'ab*c|de(fg)*'
 # # regex = '(((bb|b)*|(ab|ca)*)|(bcab|acc)**)c'
 #
 # root = parse_regex(regex)
 #
-# print("Tree: '{}':".format(regex))
+# # print("Tree: '{}':".format(regex))
 # root.print_node()
